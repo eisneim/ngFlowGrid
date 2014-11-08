@@ -1,7 +1,9 @@
 ngFlowGrid
 ==========
 
-pinterest layout like responsive image grid using AngularJS (and currently using jquery , will remove jquery in the next version);
+pinterest layout like responsive image grid for AngularJS app (and currently using jquery , will remove jquery in next version);
+
+![preview](snapshot.jpg 'ngFlowGrid preview')
 
 #Installation
 1.include angularJS, jquery and ngFlowGrid to your page:
@@ -12,8 +14,12 @@ pinterest layout like responsive image grid using AngularJS (and currently using
 <script src="src/ngFlowGrid.js"></script>
 
 ```
+2.add ngFlowGrid to your app's dependency:
+```javascript
+var myApp = angular.module('myAppName', ['ngFlowGrid']);
+```
 
-2.use ngFlowGrid directive in you html code:
+3.use ngFlowGrid directive in you html code:
 ```html
 <ul class="flowGrid" ng-flow-grid="homePageGird" min-item-width="200">
 	<li class="flowGridItem" ng-repeat="item in items">
@@ -25,7 +31,7 @@ pinterest layout like responsive image grid using AngularJS (and currently using
 
 ```
 
-3.add some basic css to format the layout
+4.add some basic css to format the layout
 
 ```css
 
@@ -36,13 +42,8 @@ pinterest layout like responsive image grid using AngularJS (and currently using
 .flowGrid:after{
 	clear:both;
 }
-.flowGridItem{
-	margin-bottom: 5px;
-	a{color:#555;}
-	&>a>img{width: 100%;}
-	&>h4{margin: 2px 0;font-size: 14px;}
-	.itemStat{font-size: 18px;color: #999;}	
-}
+.flowGridItem{ margin-bottom:10px;}
+.flowGridItem img{width:100%;}
 .flowGridColumn{
 	float: left;
 	padding-left: 10px;
@@ -52,7 +53,7 @@ pinterest layout like responsive image grid using AngularJS (and currently using
 }
 
 ```
-4.controll the gird in your controller:
+5.controll the gird in your controller:
 ```javascript
 app.controller('appCtrl',['$scope','fgDelegate',function($scope,fgDelegate){
 	
@@ -66,5 +67,29 @@ app.controller('appCtrl',['$scope','fgDelegate',function($scope,fgDelegate){
 
 ```
 
-#API
+#Directive options
+###ngFlowGrid
+give a name to your grid, so that you can control mutil grid in one page.
+###itemSelector(default:'.flowGridItem')
+###minItemWidth(default:150)
+this value will affect how many colums you have, the smaller it is the more columns there will be;
 
+#Service
+the through `fgDelegate` service you can get your flow object and you can controll it in your controller or directive:
+
+###new(option)
+options are:
+ - `container`: container element.
+ - `name`: string,the name of new grid.
+ - `itemSelector`: string
+ - `minItemWidth`: number, this will affect how many columns in grid;
+###getFlow(name)
+ this will return a flowgrid object ,and you can controll that grid throght this object
+  - minItemWidth:number
+  - container:element
+  - autoCalculation: boolean
+  - columnsHeights: array
+  - itemsHeights: object
+  - items: array of element
+  - refill() : calculate culums based on minItemWidth,and put items into columns;
+  - empty() : remove all items inside of columns
