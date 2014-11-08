@@ -83,13 +83,14 @@ options are:
  - `name`: string,the name of new grid.
  - `itemSelector`: string
  - `minItemWidth`: number, this will affect how many columns in grid;
+
 ###getFlow(name)
- this will return a flowgrid object ,and you can controll that grid throght this object
-  - minItemWidth:number
-  - container:element
-  - autoCalculation: boolean
-  - columnsHeights: array
-  - itemsHeights: object
-  - items: array of element
-  - refill() : calculate culums based on minItemWidth,and put items into columns;
-  - empty() : remove all items inside of columns
+this will return a flowgrid object ,and you can controll that grid throght this object
+ - minItemWidth:number
+ - container:element
+ - autoCalculation: boolean
+ - columnsHeights: array
+ - itemsHeights: object
+ - items: array of element
+ - refill() : calculate culums based on minItemWidth,and put items into columns;
+ - empty() : remove all items inside of columns
