@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html ng-app="demo">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+    <title>ngFlowGrid</title>
+    
+    <link rel="stylesheet" type="text/css" href="lib/bootstrap.min.css">
+
+    <script src="lib/jquery.min.js"></script>
+    <script src="lib/angular.min.js"></script>
+    <script src="../src/ngFlowGrid.js"></script>
+
+    <script src="app/app.js"></script>
+    <style type="text/css">
+    /*------------------------*/
+    .flowGrid{position: relative;padding: 0;}
+    .flowGrid:before,.flowGrid:after{
+        content: "";
+        display: table;
+    }
+    .flowGrid:after{
+        clear:both;
+    }
+    .flowGridItem{ list-style: none;}
+    .flowGridItem img{width:100%;}
+    .flowGridColumn{
+        float: left;
+        padding-left: 10px;
+    }
+    .flowGridColumn:last-of-type{
+        padding-right: 10px;
+    }
+
+    /*---------- demo page only--------------*/
+    header{
+      background-color: #efefef;
+      margin-bottom: 25px;
+      height: 250px;
+      text-align: center;
+
+    }
+
+
+    </style>
+  </head>
+
+  <body ng-controller="appCtrl">
+    <header>
+      <div class="container">
+        <br>
+        <h1>ngFlowGrid</h1>
+        <p>Pinterest layout like responsive image grid for AngularJS app</p>
+        <br>
+        <p>
+          <button class="btn btn-default btn" ng-click="addItem()">Add item</button>
+          <button class="btn btn-success btn" ng-click="changeWidth(50)">Increase itemWidth</button>
+          <button class="btn btn-warning btn" ng-click="changeWidth(-50)">Decrease itemWidth</button>
+        </p>
+        <p>resize window to see auto update</p>
+      </div>
+    </header>
+    <section>
+      <div class="container">
+
+        <ul class="flowGrid" ng-flow-grid="demoGird" min-item-width="200">
+          <li class="flowGridItem" ng-repeat="item in items">
+              <a href=""><img ng-src="{{item.img}}"></a>
+              <p>{{item.name}}</p>
+          </li>
+        </ul>
+
+      </div>
+    </section>
+  </body>
+</html>

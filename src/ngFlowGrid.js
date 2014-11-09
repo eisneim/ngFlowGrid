@@ -15,19 +15,16 @@ angular.module('ngFlowGrid', [])
 
 		var flows = {};// all flow instance;
 		var Flow = function(data){
-
-			if(!data.container){
-				throw{
-					name:'MissingParams',
-					message:'a flow container is needed'
-				}
+			// delete old one
+			if(flows[data.name]){
+				delete flows[data.name];
 			}
 
-			var thisObj = this;
 			this.keyName = data.name||'amzFlow_'+ cnt++;// there might be more than 1 flow grid
 			this.__uid_item_counter = 0;
 
-			this.minItemWidth = data.minItemWidth || 150;
+			this.minItemWidth = parseInt(data.minItemWidth,10) || 150;
+			this.itemSelector = data.itemSelector;
 			this.autoCalculation = true;//false, you have to puat height in image
 			this.columns = $([]);
 
@@ -35,21 +32,12 @@ angular.module('ngFlowGrid', [])
 			this.itemsHeights = {};
 
 			this.container = data.container;//element;
-			this.items = this.container.find( data.itemSelector||'.flowGridItem');
+			this.items = this.container.find( this.itemSelector||'.flowGridItem');
 			this.tempContainer = $('<div class="flowGridTemp">').css('visibility', 'hidden');
 			// put temp container to container, 
 			this.container.append(this.tempContainer);
 
-			this.items.each(function(){
-				var elm = $(this);
-				var id = elm.attr('id');
-				// give every item a unique id
-				if (!id) {
-					// Generate an unique id
-					id = thisObj.generateUniqueId();
-					elm.attr('id', id);
-				}
-			});
+			
 			// hide the container temporarily,while doing the transform
 			this.container.css('visibility', 'hidden');	
 			// start
@@ -63,15 +51,27 @@ angular.module('ngFlowGrid', [])
 			// console.log(this.itemsHeights);
 		}
 
-		Flow.prototype.refill = function(){
+		Flow.prototype.refill = function(forceRefill){
+			var that = this;
+			// give every item a ubique id
+			this.items.each(function(){
+				var elm = $(this);
+				var id = elm.attr('id');
+				// give every item a unique id
+				if (!id) {
+					// Generate an unique id
+					id = that.generateUniqueId();
+					elm.attr('id', id);
+				}
+			});
+
 			this.numberOfColumns = Math.floor(this.container.width() / this.minItemWidth);
 			// always keep at least one column 
 			if (this.numberOfColumns < 1)
 	            this.numberOfColumns = 1;
 
 	        var needToRefill = this.ensureColumns();
-	    // console.log('need to refill?',needToRefill);
-	        if (needToRefill) {
+	        if (needToRefill || forceRefill) {
 				this.fillColumns();
 
 				// Remove excess columns
@@ -86,8 +86,8 @@ angular.module('ngFlowGrid', [])
 		Flow.prototype.ensureColumns = function(){
 			var createdCnt = this.columns.length;
 			var calculatedCnt = this.numberOfColumns;
-		// console.log('createdCnt',createdCnt);
-		// console.log('calculatedCnt',calculatedCnt);
+			// console.log('createdCnt',createdCnt);
+			// console.log('calculatedCnt',calculatedCnt);
 
 			this.tempContainer.width(this.container.width());
 			// in the first time, working container is tempContainer
@@ -138,7 +138,6 @@ angular.module('ngFlowGrid', [])
 					var item = this.items.eq(itemIdx);
 					var height = 0;
 					column.append(item);
-
 					if (this.autoCalculation) {
 						// Check height after being placed in its column
 						height = item.outerHeight();
@@ -236,6 +235,10 @@ angular.module('ngFlowGrid', [])
 			}
 			
 		}
+		Flow.prototype.itemsChanged = function(){
+			this.items = this.container.find( this.itemSelector||'.flowGridItem');	
+			this.refill(true);	
+		}
 
 		return {
 			// grab some dom element;
@@ -248,20 +251,21 @@ angular.module('ngFlowGrid', [])
 			}
 		}
 	}])
-	.directive('ngFlowGrid',['fgDelegate',function(amzFlowDelegate){
+	.directive('ngFlowGrid',['fgDelegate','$timeout',function(amzFlowDelegate,$timeout){
 		return {
 			restrict:'A',
 			link:function($scope,element,attrs){
-				// make sure ng-repeat is done
-				$scope.$watch(element.children(),function(){
+				function newGrid(){
 					var flow = amzFlowDelegate.new({
 						container: element,
 						name: attrs['ngFlowGrid'] || 'ngFlowGrid',
 						itemSelector: attrs['itemSelector'] || '.flowGridItem',
 						minItemWidth: attrs['minItemWidth']||150,
 					});
-				});
-				
+				}
+				// you can watch $last as well;
+				$scope.$watch(element.children(),newGrid);
+
 				$scope.$on('$destroy',function(){
 					$(window).unbind('resize',false);
 				});

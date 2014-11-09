@@ -26,7 +26,6 @@ var myApp = angular.module('myAppName', ['ngFlowGrid']);
 		<a href=""><img ng-src="{{item.img}}"></a>
 		<h2>{{item.description}}</h2>
 	</li>
-	......
 </ul>
 
 ```
@@ -34,7 +33,7 @@ var myApp = angular.module('myAppName', ['ngFlowGrid']);
 4.add some basic css to format the layout
 
 ```css
-
+*{box-sizing: border-box;}
 .flowGrid:before,.flowGrid:after{
 	content: "";
 	display: table;
@@ -57,11 +56,13 @@ var myApp = angular.module('myAppName', ['ngFlowGrid']);
 ```javascript
 app.controller('appCtrl',['$scope','fgDelegate',function($scope,fgDelegate){
 	
-	var homePageGrid = fgDelegate.getFlow('homePageGird');
+	$scope.updateGrid = function(){
+		var homePageGrid = fgDelegate.getFlow('homePageGird');
 	
-	// then you can:
-	homePageGrid.minItemWidth = 150;
-	homePageGrid.refill();
+		// then you can:
+		homePageGrid.minItemWidth += width;
+    	fgDelegate.getFlow('homePageGird').refill(true);
+	}
 
 }]);
 
@@ -75,7 +76,7 @@ give a name to your grid, so that you can control mutil grid in one page.
 this value will affect how many colums you have, the smaller it is the more columns there will be;
 
 #Service
-the through `fgDelegate` service you can get your flow object and you can controll it in your controller or directive:
+through `fgDelegate` service you can get your flow object and you can controll it in your controller or directive:
 
 ###new(option)
 options are:
@@ -86,11 +87,18 @@ options are:
 
 ###getFlow(name)
 this will return a flowgrid object ,and you can controll that grid throght this object
- - minItemWidth:number
- - container:element
- - autoCalculation: boolean
- - columnsHeights: array
- - itemsHeights: object
- - items: array of element
- - refill() : calculate culums based on minItemWidth,and put items into columns;
- - empty() : remove all items inside of columns
+ - `minItemWidth`:number
+ - `container`:element
+ - `autoCalculation`: boolean
+ - `columnsHeights`: array
+ - `itemsHeights`: object
+ - `items`: array of element
+ - `refill([forceRefill]) `: calculate culums based on minItemWidth,and put items into columns; [forceRefill]:boolean;
+ - `itemsChanged()`: tell flow grid you add or removed items in your controller; before you call this method, make sure ngRepeat is finished rendering ,so you should call it like this:
+ ```javascript
+ 	// make sure ngRepeat is finished rendering
+	$scope.$watch('$last',function(){
+		fgDelegate.getFlow('demoGird').itemsChanged();
+	});
+ ```
+ - `empty()` : remove all items inside of columns
