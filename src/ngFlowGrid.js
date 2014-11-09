@@ -11,11 +11,11 @@
 
 angular.module('ngFlowGrid', [])
 	.factory('fgDelegate',[function(){
-		var cnt = 0;// for generate id
+		var cnt = 0;// for generating id
 
-		var flows = {};// all flow instance;
+		var flows = {};//store all flowGrid instance;
 		var Flow = function(data){
-			// delete old one
+			// delete old one if exists
 			if(flows[data.name]){
 				delete flows[data.name];
 			}
@@ -40,7 +40,7 @@ angular.module('ngFlowGrid', [])
 			
 			// hide the container temporarily,while doing the transform
 			this.container.css('visibility', 'hidden');	
-			// start
+			// start to calculate columns and fill items;
 			this.refill();
 			// when resize we also need to refill
 			$(window).resize($.proxy(this.refill, this));

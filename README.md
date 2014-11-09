@@ -60,8 +60,8 @@ app.controller('appCtrl',['$scope','fgDelegate',function($scope,fgDelegate){
 		var homePageGrid = fgDelegate.getFlow('homePageGird');
 	
 		// then you can:
-		homePageGrid.minItemWidth += width;
-    	fgDelegate.getFlow('homePageGird').refill(true);
+		homePageGrid.minItemWidth += 20;
+    	homePageGrid.refill(true);
 	}
 
 }]);
@@ -70,13 +70,13 @@ app.controller('appCtrl',['$scope','fgDelegate',function($scope,fgDelegate){
 
 #Directive options
 ###ngFlowGrid
-give a name to your grid, so that you can control mutil grid in one page.
+give a name for your grid, so that you can controll mutil grid in one page.
 ###itemSelector(default:'.flowGridItem')
 ###minItemWidth(default:150)
-this value will affect how many colums you have, the smaller it is the more columns there will be;
+this value will affect how many columns you have, the smaller it is the more columns there will be;
 
 #Service
-through `fgDelegate` service you can get your flow object and you can controll it in your controller or directive:
+through `fgDelegate` service you can get flow object and controll it in your controller or directive:
 
 ###new(option)
 options are:
@@ -94,11 +94,12 @@ this will return a flowgrid object ,and you can controll that grid throght this 
  - `itemsHeights`: object
  - `items`: array of element
  - `refill([forceRefill]) `: calculate culums based on minItemWidth,and put items into columns; [forceRefill]:boolean;
- - `itemsChanged()`: tell flow grid you add or removed items in your controller; before you call this method, make sure ngRepeat is finished rendering ,so you should call it like this:
- ```javascript
+ - `itemsChanged()`: tell flow grid you have added or removed items in your controller; before you call this method, make sure ngRepeat is finished rendering ,so you should call it like this:
+
+```javascript
  	// make sure ngRepeat is finished rendering
 	$scope.$watch('$last',function(){
 		fgDelegate.getFlow('demoGird').itemsChanged();
 	});
- ```
+```
  - `empty()` : remove all items inside of columns
