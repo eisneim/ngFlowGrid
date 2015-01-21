@@ -20,30 +20,33 @@ angular.module('ngFlowGrid', [])
 				delete flows[data.name];
 			}
 
-			this.keyName = data.name||'amzFlow_'+ cnt++;// there might be more than 1 flow grid
+			var flowInstance = this;
+
+			this.keyName = data.name||'ngFlow_'+ cnt++;// there might be more than 1 flow grid
 			this.__uid_item_counter = 0;
 
 			this.minItemWidth = parseInt(data.minItemWidth,10) || 150;
 			this.itemSelector = data.itemSelector;
-			this.autoCalculation = true;//false, you have to puat height in image
-			this.columns = $([]);
+			this.autoCalculation = true;//false, you have to put height in img tag;
+			this.columns = []; // array of html elements
 
 			this.columnsHeights = [];
 			this.itemsHeights = {};
 
-			this.container = data.container;//element;
-			this.items = this.container.find( this.itemSelector||'.flowGridItem');
-			this.tempContainer = $('<div class="flowGridTemp">').css('visibility', 'hidden');
+			this.container = data.container;//html element, not jquery object;
+			this.items = this.container.querySelectorAll( this.itemSelector||'.flowGridItem');
+			this.tempContainer = document.createElement('div').classList.add('flowGridTemp');
 			// put temp container to container, 
-			this.container.append(this.tempContainer);
+			this.container.appendChild( this.tempContainer );
 
 			
 			// hide the container temporarily,while doing the transform
-			this.container.css('visibility', 'hidden');	
+			this.container.style['visibility'] = 'hidden';
+			this.tempContainer.style['visibility'] = 'hidden';
 			// start to calculate columns and fill items;
 			this.refill();
 			// when resize we also need to refill
-			$(window).resize($.proxy(this.refill, this));
+			window.addEventListener('resize', this.refill.bind( this ) );
 
 			// console.log(this.items);
 			// console.log(this.container);
@@ -51,27 +54,36 @@ angular.module('ngFlowGrid', [])
 			// console.log(this.itemsHeights);
 		}
 
-		Flow.prototype.refill = function(forceRefill){
+		Flow.prototype.refill = function( forceRefill ){
 			var that = this;
 			// give every item a ubique id
-			this.items.each(function(){
-				var elm = $(this);
-				var id = elm.attr('id');
+			Array.prototype.forEach.call(this.items, function(elm){
+				var id = elm.getAttribute('id');
 				// give every item a unique id
 				if (!id) {
 					// Generate an unique id
 					id = that.generateUniqueId();
-					elm.attr('id', id);
+					elm.setAttribute('id', id);
 				}
 			});
+			// this.items.each(function(){
+			// 	var elm = $(this);
+			// 	var id = elm.attr('id');
+			// 	// give every item a unique id
+			// 	if (!id) {
+			// 		// Generate an unique id
+			// 		id = that.generateUniqueId();
+			// 		elm.attr('id', id);
+			// 	}
+			// });
 
-			this.numberOfColumns = Math.floor(this.container.width() / this.minItemWidth);
+			this.numberOfColumns = Math.floor(this.container.clientWidth / this.minItemWidth);
 			// always keep at least one column 
 			if (this.numberOfColumns < 1)
 	            this.numberOfColumns = 1;
 
 	        var needToRefill = this.ensureColumns();
-	        if (needToRefill || forceRefill) {
+	        if (needToRefill || forceRefill == true) {
 				this.fillColumns();
 
 				// Remove excess columns
@@ -241,7 +253,6 @@ angular.module('ngFlowGrid', [])
 		}
 
 		return {
-			// grab some dom element;
 			new:function(option){
 				flows[option.name] = new Flow(option);
 				return flows[option.name];
@@ -257,7 +268,7 @@ angular.module('ngFlowGrid', [])
 			link:function($scope,element,attrs){
 				function newGrid(){
 					var flow = amzFlowDelegate.new({
-						container: element,
+						container: element[0],
 						name: attrs['ngFlowGrid'] || 'ngFlowGrid',
 						itemSelector: attrs['itemSelector'] || '.flowGridItem',
 						minItemWidth: attrs['minItemWidth']||150,
