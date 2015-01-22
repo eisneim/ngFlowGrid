@@ -35,7 +35,8 @@ angular.module('ngFlowGrid', [])
 
 			this.container = data.container;//html element, not jquery object;
 			this.items = this.container.querySelectorAll( this.itemSelector||'.flowGridItem');
-			this.tempContainer = document.createElement('div').classList.add('flowGridTemp');
+			this.tempContainer = document.createElement('div');
+			this.tempContainer.className = 'flowGridTemp';
 			// put temp container to container, 
 			this.container.appendChild( this.tempContainer );
 
@@ -66,16 +67,6 @@ angular.module('ngFlowGrid', [])
 					elm.setAttribute('id', id);
 				}
 			});
-			// this.items.each(function(){
-			// 	var elm = $(this);
-			// 	var id = elm.attr('id');
-			// 	// give every item a unique id
-			// 	if (!id) {
-			// 		// Generate an unique id
-			// 		id = that.generateUniqueId();
-			// 		elm.attr('id', id);
-			// 	}
-			// });
 
 			this.numberOfColumns = Math.floor(this.container.clientWidth / this.minItemWidth);
 			// always keep at least one column 
@@ -87,21 +78,28 @@ angular.module('ngFlowGrid', [])
 				this.fillColumns();
 
 				// Remove excess columns
-				this.columns.filter(':hidden').remove();
-				// update this.colums array
-				var diff = this.columns.length - this.numberOfColumns;
-				this.columns.splice(this.columns.length-diff,diff);
+				// this.columns.filter(':hidden').remove();
+				// // update this.colums array
+				// var diff = this.columns.length - this.numberOfColumns;
+				// this.columns.splice(this.columns.length-diff,diff);
+				this.columns.map(function(col){
+					if(col.className.indexOf('shouldBeRemoved') > -1 ){
+						that.container.removeChild( col );
+					}
+				});
+				console.log('-------- after refill ,should remove old columns');
 			}
-			this.container.css('visibility', 'visible');
+			this.container.style['visibility'] = 'visible';
 
 		}
 		Flow.prototype.ensureColumns = function(){
 			var createdCnt = this.columns.length;
 			var calculatedCnt = this.numberOfColumns;
-			// console.log('createdCnt',createdCnt);
-			// console.log('calculatedCnt',calculatedCnt);
+			
+			console.log('createdCnt',createdCnt);
+			console.log('calculatedCnt',calculatedCnt);
 
-			this.tempContainer.width(this.container.width());
+			this.tempContainer.clientWidth = this.container.clientWidth;
 			// in the first time, working container is tempContainer
 			this.workingContainer = createdCnt === 0 ? this.tempContainer : this.container;
 			// if  columns are not enough, we add new columns
@@ -109,18 +107,18 @@ angular.module('ngFlowGrid', [])
 				// how many more do we need?
 				var neededCnt = calculatedCnt - createdCnt;
 				for (var columnIdx = 0; columnIdx < neededCnt; columnIdx++) {
-					var column = $('<div>', {
-						'class': 'flowGridColumn'
-					});
+					var column = document.createElement('div');
+					column.className = 'flowGridColumn';
 
-					this.workingContainer.append(column);
+					this.workingContainer.appendChild(column);
 				}
-			// what we already have is more than what we need, we hide what we don' need;
+			// what we already have is more than what we need, we hide what we don't need;
 			}else if(calculatedCnt < createdCnt){
 				var lastColumn = createdCnt;
 				while (calculatedCnt <= lastColumn) {
 					// We can't remove columns here becase it will remove items to. So we hide it and will remove later.
-					this.columns.eq(lastColumn).hide();
+					this.columns[lastColumn].style['visibility'] = 'hidden';
+					this.columns[lastColumn].classList.add('shouldBeRemoved');
 					lastColumn--;
 				}
 
@@ -131,9 +129,9 @@ angular.module('ngFlowGrid', [])
 			// we already make column exactly what we need ,now make the emtp this.column array to be filled with element;
 			if (calculatedCnt !== createdCnt) {
 
-				this.columns = this.workingContainer.find('.flowGridColumn');
-				this.columns.each(function(){
-					$(this).css('width',(100 / calculatedCnt) + '%');
+				this.columns = this.workingContainer.querySelectorAll('.flowGridColumn');
+				this.columns.map(function(col){
+					col.style['width'] = (100 / calculatedCnt) + '%';
 				});
 				return true;
 			}
@@ -144,22 +142,22 @@ angular.module('ngFlowGrid', [])
 			var itemsCnt = this.items.length;
 			// loop through all colums ,and add item to it
 			for (var columnIdx = 0; columnIdx < columnsCnt; columnIdx++) {
-				var column = this.columns.eq(columnIdx);
+				var column = this.columns[columnIdx];
 				this.columnsHeights[columnIdx] = 0;
 				for (var itemIdx = columnIdx; itemIdx < itemsCnt; itemIdx += columnsCnt) {
-					var item = this.items.eq(itemIdx);
+					var item = this.items[itemIdx];
 					var height = 0;
-					column.append(item);
+					column.appendChild(item);
 					if (this.autoCalculation) {
 						// Check height after being placed in its column
-						height = item.outerHeight();
+						height = item.offsetHeight;
 					}
 					else {
 						// Read img height attribute
-						height = parseInt(item.find('img').attr('height'), 10);
+						height = parseInt(item.querySelector('img').getAttribute('height'), 10);
 					}
 					// record their height
-					this.itemsHeights[item.attr('id')] = height;
+					this.itemsHeights[item.id] = height;
 					this.columnsHeights[columnIdx] += height;
 				}
 			}
@@ -167,21 +165,21 @@ angular.module('ngFlowGrid', [])
 			this.levelBottomEdge(this.itemsHeights, this.columnsHeights);
 			// first time workingContainer is tempContainer, otherwise is this.container;
 			if (this.workingContainer === this.tempContainer) {
-				this.container.append(this.tempContainer.children());
-				this.tempContainer.empty();
+				this.container.appendChild(this.tempContainer.children );
+				this.tempContainer.innerHTML = '';
 			}
-			// this.container.trigger('mosaicflow-layout');
+
 		};
 		// rearrange
 		Flow.prototype.levelBottomEdge = function(itemsHeights, columnsHeights){
 			while (true) {
 				// get indexof lowest and highest column
-				var lowestColumn = $.inArray(Math.min.apply(null, columnsHeights), columnsHeights);
+				var lowestColumn = $.inArray( Math.min.apply(null, columnsHeights) , columnsHeights);
 				var highestColumn = $.inArray(Math.max.apply(null, columnsHeights), columnsHeights);
 				if (lowestColumn === highestColumn) return;// nothing to do ,return;
 
-				var lastInHighestColumn = this.columns.eq(highestColumn).children().last();
-				var lastInHighestColumnHeight = itemsHeights[lastInHighestColumn.attr('id')];
+				var lastInHighestColumn = this.columns.[highestColumn].lastChild;
+				var lastInHighestColumnHeight = itemsHeights[ lastInHighestColumn.id ];
 				
 				var lowestHeight = columnsHeights[lowestColumn];
 				var highestHeight = columnsHeights[highestColumn];
@@ -192,7 +190,7 @@ angular.module('ngFlowGrid', [])
 
 				// too much difference between lowest and highest,
 				// move last item in the highest to the lowest column
-				this.columns.eq(lowestColumn).append(lastInHighestColumn);
+				this.columns.[lowestColumn].appendChild(lastInHighestColumn);
 				// update new hight record;
 				columnsHeights[highestColumn] -= lastInHighestColumnHeight;
 				columnsHeights[lowestColumn] += lastInHighestColumnHeight;
@@ -213,13 +211,13 @@ angular.module('ngFlowGrid', [])
 		Flow.prototype.empty = function(){
 			var columnsCnt = this.numberOfColumns;
 
-			this.items = $([]);
+			this.items = [];
 			this.itemsHeights = {};
 
 			for (var columnIdx = 0; columnIdx < columnsCnt; columnIdx++) {
 				var column = this.columns.eq(columnIdx);
 				this.columnsHeights[columnIdx] = 0;
-				column.empty();
+				column.innerHTML = '';
 			}
 		}
 		Flow.prototype.recomputeHeights = function(){
@@ -229,21 +227,35 @@ angular.module('ngFlowGrid', [])
 				var column = this.columns.eq(columnIdx);
 
 				this.columnsHeights[columnIdx] = 0;
-				column.children().each(function(){
+				for(var ii=0; ii<column.children.length; ii++ ){
 					var height = 0;
-					var item = $(this);
+					var item = column.children[ii];
 					if (that.autoCalculation) {
 						// Check height after being placed in its column
 						height = item.outerHeight();
-					}
-					else {
+					}else {
 						// Read img height attribute
-						height = parseInt(item.find('img').attr('height'), 10);
+						height = parseInt( item.querySelectorAll('img').getAttribute('height'), 10 );
 					}
 
-					that.itemsHeights[item.attr('id')] = height;
+					that.itemsHeights[ item.id ] = height;
 					that.columnsHeights[columnIdx] += height;
-				});
+				}
+				// column.children().each(function(){
+				// 	var height = 0;
+				// 	var item = $(this);
+				// 	if (that.autoCalculation) {
+				// 		// Check height after being placed in its column
+				// 		height = item.outerHeight();
+				// 	}
+				// 	else {
+				// 		// Read img height attribute
+				// 		height = parseInt( item.querySelectorAll('img').getAttribute('height'), 10 );
+				// 	}
+
+				// 	that.itemsHeights[ item.id ] = height;
+				// 	that.columnsHeights[columnIdx] += height;
+				// });
 			}
 			
 		}
