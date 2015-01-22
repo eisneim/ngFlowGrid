@@ -5,6 +5,11 @@
  * License: MIT
  */
 
+/**
+ * TODO 
+ * 1.css3 transition option
+ * 2. in one column
+ */
 (function() {
 
 'use strict';
@@ -82,11 +87,12 @@ angular.module('ngFlowGrid', [])
 				// // update this.colums array
 				// var diff = this.columns.length - this.numberOfColumns;
 				// this.columns.splice(this.columns.length-diff,diff);
-				this.columns.map(function(col){
-					if(col.className.indexOf('shouldBeRemoved') > -1 ){
-						that.container.removeChild( col );
-					}
-				});
+
+				// for(var aa=0; aa < this.columns.length; aa++){
+				// 	if(this.columns[aa].className.indexOf('shouldBeRemoved') > -1 ){
+				// 		that.container.removeChild( this.columns[aa] );
+				// 	}
+				// }
 				console.log('-------- after refill ,should remove old columns');
 			}
 			this.container.style['visibility'] = 'visible';
@@ -117,8 +123,8 @@ angular.module('ngFlowGrid', [])
 				var lastColumn = createdCnt;
 				while (calculatedCnt <= lastColumn) {
 					// We can't remove columns here becase it will remove items to. So we hide it and will remove later.
-					this.columns[lastColumn].style['visibility'] = 'hidden';
-					this.columns[lastColumn].classList.add('shouldBeRemoved');
+					this.columns[lastColumn-1].style['visibility'] = 'hidden';
+					this.columns[lastColumn-1].classList.add('shouldBeRemoved');
 					lastColumn--;
 				}
 
@@ -130,9 +136,10 @@ angular.module('ngFlowGrid', [])
 			if (calculatedCnt !== createdCnt) {
 
 				this.columns = this.workingContainer.querySelectorAll('.flowGridColumn');
-				this.columns.map(function(col){
-					col.style['width'] = (100 / calculatedCnt) + '%';
-				});
+				
+				for(var jj=0; jj< this.columns.length; jj++){
+					this.columns[jj].style['width'] = (100 / calculatedCnt) + '%';
+				}
 				return true;
 			}
 			return false;
@@ -165,7 +172,9 @@ angular.module('ngFlowGrid', [])
 			this.levelBottomEdge(this.itemsHeights, this.columnsHeights);
 			// first time workingContainer is tempContainer, otherwise is this.container;
 			if (this.workingContainer === this.tempContainer) {
-				this.container.appendChild(this.tempContainer.children );
+				for(var kk=0;kk< this.tempContainer.children.length; kk++){
+					this.container.appendChild(this.tempContainer.children[kk] );
+				}
 				this.tempContainer.innerHTML = '';
 			}
 
@@ -178,7 +187,7 @@ angular.module('ngFlowGrid', [])
 				var highestColumn = $.inArray(Math.max.apply(null, columnsHeights), columnsHeights);
 				if (lowestColumn === highestColumn) return;// nothing to do ,return;
 
-				var lastInHighestColumn = this.columns.[highestColumn].lastChild;
+				var lastInHighestColumn = this.columns[highestColumn].lastChild;
 				var lastInHighestColumnHeight = itemsHeights[ lastInHighestColumn.id ];
 				
 				var lowestHeight = columnsHeights[lowestColumn];
@@ -190,7 +199,7 @@ angular.module('ngFlowGrid', [])
 
 				// too much difference between lowest and highest,
 				// move last item in the highest to the lowest column
-				this.columns.[lowestColumn].appendChild(lastInHighestColumn);
+				this.columns[lowestColumn].appendChild(lastInHighestColumn);
 				// update new hight record;
 				columnsHeights[highestColumn] -= lastInHighestColumnHeight;
 				columnsHeights[lowestColumn] += lastInHighestColumnHeight;
@@ -232,7 +241,7 @@ angular.module('ngFlowGrid', [])
 					var item = column.children[ii];
 					if (that.autoCalculation) {
 						// Check height after being placed in its column
-						height = item.outerHeight();
+						height = item.offsetHeight;
 					}else {
 						// Read img height attribute
 						height = parseInt( item.querySelectorAll('img').getAttribute('height'), 10 );
@@ -260,7 +269,7 @@ angular.module('ngFlowGrid', [])
 			
 		}
 		Flow.prototype.itemsChanged = function(){
-			this.items = this.container.find( this.itemSelector||'.flowGridItem');	
+			this.items = this.container.querySelectorAll( this.itemSelector||'.flowGridItem');	
 			this.refill(true);	
 		}
 
