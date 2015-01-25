@@ -1,7 +1,7 @@
 ngFlowGrid
 ==========
 
-pinterest layout like responsive image grid for AngularJS app (and currently using jquery , will remove jquery in next version);
+pinterest layout like responsive image grid for AngularJS app with no jQuery dependency;
 
 ![preview](snapshot.jpg 'ngFlowGrid preview')
 
@@ -67,6 +67,8 @@ app.controller('appCtrl',['$scope','fgDelegate',function($scope,fgDelegate){
 }]);
 
 ```
+take look at demo app;
+
 
 #Directive options
 ###ngFlowGrid
