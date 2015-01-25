@@ -8,7 +8,7 @@
 /**
  * TODO 
  * 1.css3 transition option
- * 2. in one column
+ * 2. in one column split 2 image;
  */
 (function() {
 
@@ -82,18 +82,10 @@ angular.module('ngFlowGrid', [])
 	        if (needToRefill || forceRefill == true) {
 				this.fillColumns();
 
-				// Remove excess columns
-				// this.columns.filter(':hidden').remove();
-				// // update this.colums array
-				// var diff = this.columns.length - this.numberOfColumns;
-				// this.columns.splice(this.columns.length-diff,diff);
-
-				// for(var aa=0; aa < this.columns.length; aa++){
-				// 	if(this.columns[aa].className.indexOf('shouldBeRemoved') > -1 ){
-				// 		that.container.removeChild( this.columns[aa] );
-				// 	}
-				// }
-				console.log('-------- after refill ,should remove old columns');
+				var shouldBeRemoved = this.container.querySelectorAll('.flowGridColumn.shouldBeRemoved');
+				[].forEach.call(shouldBeRemoved,function(elm){
+					that.container.removeChild( elm );
+				});
 			}
 			this.container.style['visibility'] = 'visible';
 
@@ -102,8 +94,8 @@ angular.module('ngFlowGrid', [])
 			var createdCnt = this.columns.length;
 			var calculatedCnt = this.numberOfColumns;
 			
-			console.log('createdCnt',createdCnt);
-			console.log('calculatedCnt',calculatedCnt);
+			// console.log('createdCnt',createdCnt);
+			// console.log('calculatedCnt',calculatedCnt);
 
 			this.tempContainer.clientWidth = this.container.clientWidth;
 			// in the first time, working container is tempContainer
@@ -118,14 +110,16 @@ angular.module('ngFlowGrid', [])
 
 					this.workingContainer.appendChild(column);
 				}
+
 			// what we already have is more than what we need, we hide what we don't need;
 			}else if(calculatedCnt < createdCnt){
 				var lastColumn = createdCnt;
-				while (calculatedCnt <= lastColumn) {
+				while (calculatedCnt < lastColumn) {
 					// We can't remove columns here becase it will remove items to. So we hide it and will remove later.
 					this.columns[lastColumn-1].style['visibility'] = 'hidden';
 					this.columns[lastColumn-1].classList.add('shouldBeRemoved');
 					lastColumn--;
+					// console.log('---loop for remove old columns');
 				}
 
 				var diff = createdCnt - calculatedCnt;
@@ -134,9 +128,8 @@ angular.module('ngFlowGrid', [])
 			}
 			// we already make column exactly what we need ,now make the emtp this.column array to be filled with element;
 			if (calculatedCnt !== createdCnt) {
+				this.columns = this.workingContainer.querySelectorAll('.flowGridColumn:not(.shouldBeRemoved)');
 
-				this.columns = this.workingContainer.querySelectorAll('.flowGridColumn');
-				
 				for(var jj=0; jj< this.columns.length; jj++){
 					this.columns[jj].style['width'] = (100 / calculatedCnt) + '%';
 				}
@@ -158,8 +151,7 @@ angular.module('ngFlowGrid', [])
 					if (this.autoCalculation) {
 						// Check height after being placed in its column
 						height = item.offsetHeight;
-					}
-					else {
+					}else {
 						// Read img height attribute
 						height = parseInt(item.querySelector('img').getAttribute('height'), 10);
 					}
@@ -168,11 +160,15 @@ angular.module('ngFlowGrid', [])
 					this.columnsHeights[columnIdx] += height;
 				}
 			}
+
+			// console.log(this.itemsHeights);
+			// console.log(this.columnsHeights);
+
 			// prevent too much height difference between colums
 			this.levelBottomEdge(this.itemsHeights, this.columnsHeights);
 			// first time workingContainer is tempContainer, otherwise is this.container;
 			if (this.workingContainer === this.tempContainer) {
-				for(var kk=0;kk< this.tempContainer.children.length; kk++){
+				for(var kk= this.tempContainer.children.length-1;kk>=0 ; kk--){
 					this.container.appendChild(this.tempContainer.children[kk] );
 				}
 				this.tempContainer.innerHTML = '';
@@ -250,21 +246,6 @@ angular.module('ngFlowGrid', [])
 					that.itemsHeights[ item.id ] = height;
 					that.columnsHeights[columnIdx] += height;
 				}
-				// column.children().each(function(){
-				// 	var height = 0;
-				// 	var item = $(this);
-				// 	if (that.autoCalculation) {
-				// 		// Check height after being placed in its column
-				// 		height = item.outerHeight();
-				// 	}
-				// 	else {
-				// 		// Read img height attribute
-				// 		height = parseInt( item.querySelectorAll('img').getAttribute('height'), 10 );
-				// 	}
-
-				// 	that.itemsHeights[ item.id ] = height;
-				// 	that.columnsHeights[columnIdx] += height;
-				// });
 			}
 			
 		}
