@@ -97,7 +97,7 @@ angular.module('ngFlowGrid', [])
 			// console.log('createdCnt',createdCnt);
 			// console.log('calculatedCnt',calculatedCnt);
 
-			this.tempContainer.clientWidth = this.container.clientWidth;
+			this.tempContainer.style.width = this.container.clientWidth;
 			// in the first time, working container is tempContainer
 			this.workingContainer = createdCnt === 0 ? this.tempContainer : this.container;
 			// if  columns are not enough, we add new columns
@@ -179,8 +179,8 @@ angular.module('ngFlowGrid', [])
 		Flow.prototype.levelBottomEdge = function(itemsHeights, columnsHeights){
 			while (true) {
 				// get indexof lowest and highest column
-				var lowestColumn = $.inArray( Math.min.apply(null, columnsHeights) , columnsHeights);
-				var highestColumn = $.inArray(Math.max.apply(null, columnsHeights), columnsHeights);
+				var lowestColumn = columnsHeights.indexOf( Math.min.apply(null, columnsHeights) );
+				var highestColumn = columnsHeights.indexOf( Math.max.apply(null, columnsHeights) );
 				if (lowestColumn === highestColumn) return;// nothing to do ,return;
 
 				var lastInHighestColumn = this.columns[highestColumn].lastChild;
