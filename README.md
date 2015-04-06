@@ -6,7 +6,7 @@ pinterest layout like responsive image grid for AngularJS app with no jQuery dep
 ![preview](snapshot.jpg 'ngFlowGrid preview')
 
 #Installation
-1.include angularJS, jquery and ngFlowGrid to your page:
+1.include angularJS and ngFlowGrid to your page:
 
 ```html
 <script src="path/angular.min.js"></script>
