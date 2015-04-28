@@ -51,7 +51,7 @@ var myApp = angular.module('myAppName', ['ngFlowGrid']);
 }
 
 ```
-5.controll the gird in your controller:
+5.control the grid in your controller:
 ```javascript
 app.controller('appCtrl',['$scope','fgDelegate',function($scope,fgDelegate){
 	
@@ -100,7 +100,7 @@ this will return a flowgrid object ,and you can controll that grid throght this 
 ```javascript
  	// make sure ngRepeat is finished rendering
 	$scope.$watch('$last',function(){
-		fgDelegate.getFlow('demoGird').itemsChanged();
+		fgDelegate.getFlow('demoGrid').itemsChanged();
 	});
 ```
  - `empty()` : remove all items inside of columns
