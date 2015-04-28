@@ -20,7 +20,7 @@ var myApp = angular.module('myAppName', ['ngFlowGrid']);
 
 3.use ngFlowGrid directive in you html code:
 ```html
-<ul class="flowGrid" ng-flow-grid="homePageGird" min-item-width="200">
+<ul class="flowGrid" ng-flow-grid="homePageGrid" min-item-width="200">
 	<li class="flowGridItem" ng-repeat="item in items">
 		<a href=""><img ng-src="{{item.img}}"></a>
 		<h2>{{item.description}}</h2>
@@ -56,7 +56,7 @@ var myApp = angular.module('myAppName', ['ngFlowGrid']);
 app.controller('appCtrl',['$scope','fgDelegate',function($scope,fgDelegate){
 	
 	$scope.updateGrid = function(){
-		var homePageGrid = fgDelegate.getFlow('homePageGird');
+		var homePageGrid = fgDelegate.getFlow('homePageGrid');
 	
 		// then you can:
 		homePageGrid.minItemWidth += 20;
