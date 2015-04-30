@@ -20,7 +20,7 @@ var myApp = angular.module('myAppName', ['ngFlowGrid']);
 
 3.use ngFlowGrid directive in you html code:
 ```html
-<ul class="flowGrid" ng-flow-grid="homePageGird" min-item-width="200">
+<ul class="flowGrid" ng-flow-grid="homePageGrid" min-item-width="200">
 	<li class="flowGridItem" ng-repeat="item in items">
 		<a href=""><img ng-src="{{item.img}}"></a>
 		<h2>{{item.description}}</h2>
@@ -51,12 +51,12 @@ var myApp = angular.module('myAppName', ['ngFlowGrid']);
 }
 
 ```
-5.controll the gird in your controller:
+5.control the grid in your controller:
 ```javascript
 app.controller('appCtrl',['$scope','fgDelegate',function($scope,fgDelegate){
 	
 	$scope.updateGrid = function(){
-		var homePageGrid = fgDelegate.getFlow('homePageGird');
+		var homePageGrid = fgDelegate.getFlow('homePageGrid');
 	
 		// then you can:
 		homePageGrid.minItemWidth += 20;
@@ -100,7 +100,7 @@ this will return a flowgrid object ,and you can controll that grid throght this 
 ```javascript
  	// make sure ngRepeat is finished rendering
 	$scope.$watch('$last',function(){
-		fgDelegate.getFlow('demoGird').itemsChanged();
+		fgDelegate.getFlow('demoGrid').itemsChanged();
 	});
 ```
  - `empty()` : remove all items inside of columns
