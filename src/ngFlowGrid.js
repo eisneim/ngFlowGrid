@@ -1,14 +1,14 @@
 /*! 
  * ngFlowGrid v0.0.1
  * http://eisneim.github.io/ngFlowGrid
- * Copyright (c) 2014 eisneim.com
+ * Copyright (c) 2014 glexe.com
  * License: MIT
  */
 
 /**
  * TODO 
  * 1.css3 transition option
- * 2. in one column split 2 image;
+ * 2. in one column split 2 images;
  */
 (function() {
 
@@ -280,7 +280,7 @@ angular.module('ngFlowGrid', [])
 				$scope.$watch(element.children(),newGrid);
 
 				$scope.$on('$destroy',function(){
-					$(window).unbind('resize',false);
+					angular.element(window).unbind('resize',false);
 				});
 			}
 		}
