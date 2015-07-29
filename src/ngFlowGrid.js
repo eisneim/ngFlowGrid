@@ -19,26 +19,26 @@ angular.module('ngFlowGrid', [])
 		var cnt = 0;// for generating id
 
 		var flows = {};//store all flowGrid instance;
-		var Flow = function(data){
+		var Flow = function(option){
 			// delete old one if exists
-			if(flows[data.name]){
-				delete flows[data.name];
+			if(flows[option.name]){
+				delete flows[option.name];
 			}
 
 			var flowInstance = this;
 
-			this.keyName = data.name||'ngFlow_'+ cnt++;// there might be more than 1 flow grid
+			this.keyName = option.name||'ngFlow_'+ cnt++;// there might be more than 1 flow grid
 			this.__uid_item_counter = 0;
 
-			this.minItemWidth = parseInt(data.minItemWidth,10) || 150;
-			this.itemSelector = data.itemSelector;
+			this.minItemWidth = parseInt(option.minItemWidth,10) || 150;
+			this.itemSelector = option.itemSelector;
 			this.autoCalculation = true;//false, you have to put height in img tag;
 			this.columns = []; // array of html elements
 
 			this.columnsHeights = [];
 			this.itemsHeights = {};
 
-			this.container = data.container;//html element, not jquery object;
+			this.container = option.container;//html element, not jquery object;
 			this.items = this.container.querySelectorAll( this.itemSelector||'.flowGridItem');
 			this.tempContainer = document.createElement('div');
 			this.tempContainer.className = 'flowGridTemp';
@@ -48,7 +48,7 @@ angular.module('ngFlowGrid', [])
 			
 			// hide the container temporarily,while doing the transform
 			this.container.style['visibility'] = 'hidden';
-			this.tempContainer.style['visibility'] = 'hidden';
+			// this.tempContainer.style['visibility'] = 'hidden';
 			// start to calculate columns and fill items;
 			this.refill();
 			// when resize we also need to refill
@@ -105,10 +105,11 @@ angular.module('ngFlowGrid', [])
 				// how many more do we need?
 				var neededCnt = calculatedCnt - createdCnt;
 				for (var columnIdx = 0; columnIdx < neededCnt; columnIdx++) {
-					var column = document.createElement('div');
-					column.className = 'flowGridColumn';
-
-					this.workingContainer.appendChild(column);
+					var $column = document.createElement('div');
+					$column.dataset.order = columnIdx;
+					$column.className = 'flowGridColumn';
+					// make sure insert at end of container
+					this.workingContainer.appendChild($column);	
 				}
 
 			// what we already have is more than what we need, we hide what we don't need;
@@ -129,7 +130,6 @@ angular.module('ngFlowGrid', [])
 			// we already make column exactly what we need ,now make the emtp this.column array to be filled with element;
 			if (calculatedCnt !== createdCnt) {
 				this.columns = this.workingContainer.querySelectorAll('.flowGridColumn:not(.shouldBeRemoved)');
-
 				for(var jj=0; jj< this.columns.length; jj++){
 					this.columns[jj].style['width'] = (100 / calculatedCnt) + '%';
 				}
@@ -168,10 +168,10 @@ angular.module('ngFlowGrid', [])
 			this.levelBottomEdge(this.itemsHeights, this.columnsHeights);
 			// first time workingContainer is tempContainer, otherwise is this.container;
 			if (this.workingContainer === this.tempContainer) {
-				for(var kk= this.tempContainer.children.length-1;kk>=0 ; kk--){
-					this.container.appendChild(this.tempContainer.children[kk] );
+				var len = this.tempContainer.children.length;
+				for(var kk= 0; kk<len ; kk++){
+					this.container.appendChild(this.tempContainer.children[0] );
 				}
-				this.tempContainer.innerHTML = '';
 			}
 
 		};
