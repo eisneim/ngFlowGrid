@@ -32,6 +32,8 @@ angular.module('ngFlowGrid', [])
 
 			this.minItemWidth = parseInt(option.minItemWidth,10) || 150;
 			this.itemSelector = option.itemSelector;
+			if(this.itemSelector.substr(0,1)!==".") this.itemSelector = "."+this.itemSelector;
+			
 			this.autoCalculation = true;//false, you have to put height in img tag;
 			this.columns = []; // array of html elements
 
@@ -288,3 +290,15 @@ angular.module('ngFlowGrid', [])
 
 
 })();
+
+/**
+(function() {
+    this.getName = function() {
+        return this.name;
+    };
+    this.getMessage = function() {
+        return this.message;
+    };
+}).call(MyObject.prototype);
+
+ */

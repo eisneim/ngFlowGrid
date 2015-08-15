@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html ng-app="demo">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+    <title>ngFlowGrid</title>
+    
+    <link rel="stylesheet" type="text/css" href="lib/bootstrap.min.css">
+
+    <script src="lib/angular.min.js"></script>
+    <script src="../src/ngFlowGrid.js"></script>
+
+    <script src="app/app.js"></script>
+    <style type="text/css">
+    /*------------------------*/
+    .flowGrid{position: relative;padding: 0;}
+    .flowGrid:before,.flowGrid:after{
+        content: "";
+        display: table;
+    }
+    .flowGrid:after{
+        clear:both;
+    }
+    .flowGridItem{ list-style: none;}
+    .flowGridItem img{width:100%;}
+    .flowGridColumn{
+        float: left;
+        padding-left: 10px;
+    }
+    .flowGridColumn:last-of-type{
+        padding-right: 10px;
+    }
+
+    /*---------- demo page only--------------*/
+    header{
+      background-color: #efefef;
+      margin-bottom: 25px;
+      height: 250px;
+      text-align: center;
+
+    }
+
+
+    </style>
+  </head>
+
+  <body ng-controller="appCtrl">
+    <header>
+      <div class="container">
+        <br>
+        <h1>ngFlowGrid</h1>
+        <p>Pinterest layout like responsive image grid for AngularJS app</p>
+        <br>
+        <p>
+          <button class="btn btn-default btn" ng-click="addItem()">Add item</button>
+          <button class="btn btn-success btn" ng-click="changeWidth(50)">Increase itemWidth</button>
+          <button class="btn btn-warning btn" ng-click="changeWidth(-50)">Decrease itemWidth</button>
+        </p>
+        <p>resize window to see auto update</p>
+      </div>
+    </header>
+    <section>
+      <div class="container">
+
+        <ul class="flowGrid" id="demogrid">
+          <li class="flowGridItem" ng-repeat="item in items">
+              <a href=""><img ng-src="{{item.img}}"></a>
+              <p>{{item.id}}__{{item.name}}</p>
+          </li>
+        </ul>
+
+      </div>
+    </section>
+    <script>
+
+var app = angular.module('demo', ['ngFlowGrid']);
+
+app.controller('appCtrl',['$scope','fgDelegate',"$timeout",function($scope,fgDelegate,$timeout){
+  $scope.items = [
+    {
+      id:1,
+      img:'http://placehold.it/300x600/E97452/fff',
+      name:'Lorem ipsum dolor sit amet',
+    },
+    {
+      id:2,
+      img:'http://placehold.it/300x300/4C6EB4/fff',
+      name:'Lorem ipsum dolor sit amet',
+    },
+    {
+      id:3,
+      img:'http://placehold.it/300x250/449F93/fff',
+      name:'Lorem ipsum dolor sit amet',
+    },
+    {
+      id:4,
+      img:'http://placehold.it/200x320/936FBC/fff',
+      name:'Lorem ipsum dolor sit amet',
+    },
+    {
+      id:5,
+      img:'http://placehold.it/400x500/D25064/fff',
+      name:'Lorem ipsum dolor sit amet',
+    },
+    {
+      id:6,
+      img:'http://placehold.it/300x200/CF364A/fff',
+      name:'Lorem ipsum dolor sit amet',
+    },
+    {
+      id:7,
+      img:'http://placehold.it/300x400/E59649/fff',
+      name:'Lorem ipsum dolor sit amet',
+    },
+    {
+      id:8,
+      img:'http://placehold.it/350x500/75A0CC/fff',
+      name:'Lorem ipsum dolor sit amet',
+    },
+    {
+      id:9,
+      img:'http://placehold.it/300x200/4296AD/fff',
+      name:'Lorem ipsum dolor sit amet',
+    },
+    {
+      id:10,
+      img:'http://placehold.it/300x400/9FDBC7/fff',
+      name:'Lorem ipsum dolor sit amet',
+    },
+    {
+      id:11,
+      img:'http://placehold.it/300x300/4E8EF7/fff',
+      name:'Lorem ipsum dolor sit amet',
+    },
+    
+  ]
+  
+  var flow;
+  /**
+   * ====== important ========
+   * make sure ngRepeat is done, it is better to use ngFlowGrid directive
+   * otherwise, u need to make sure ng-repeat is done,
+   */
+  $timeout( function(){
+    console.log("create flow")
+    flow = fgDelegate.new({
+      name:"demoGird",
+      minItemWidth:200,
+      container: document.getElementById("demogrid"), // must give a container
+      itemSelector:".flowGridItem", // item's className
+    })
+    console.log(flow)
+
+  },100);
+
+
+  $scope.addItem = function(){
+    var randomIndex = Math.floor(Math.random(0,1)* $scope.items.length)
+    var newItem = {
+      name:$scope.items[randomIndex].name,
+      img:$scope.items[randomIndex].img
+    }
+    // add a new item;
+    $scope.items.splice(0,0,newItem);
+
+    // make sure ngRepeat is finished rendering
+    $scope.$watch('$last',function(){
+      flow.itemsChanged();
+    });
+  }
+
+  $scope.changeWidth = function(width){
+    // var flow = fgDelegate.getFlow('demoGird')
+    flow.minItemWidth += width;
+    fgDelegate.getFlow('demoGird').refill(true);
+  }
+
+
+  // then you can:
+  // homePageGrid.minItemWidth = 150;
+  // homePageGrid.refill();
+
+}]);
+
+    </script>
+  </body>
+</html>
