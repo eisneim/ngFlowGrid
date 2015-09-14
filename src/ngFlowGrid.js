@@ -1,4 +1,4 @@
-/*! 
+/*!
  * ngFlowGrid v0.0.1
  * http://eisneim.github.io/ngFlowGrid
  * Copyright (c) 2014 glexe.com
@@ -6,7 +6,7 @@
  */
 
 /**
- * TODO 
+ * TODO
  * 1.css3 transition option
  * 2. in one column split 2 images;
  */
@@ -33,7 +33,7 @@ angular.module('ngFlowGrid', [])
 			this.minItemWidth = parseInt(option.minItemWidth,10) || 150;
 			this.itemSelector = option.itemSelector;
 			if(this.itemSelector.substr(0,1)!==".") this.itemSelector = "."+this.itemSelector;
-			
+
 			this.autoCalculation = true;//false, you have to put height in img tag;
 			this.columns = []; // array of html elements
 
@@ -44,10 +44,10 @@ angular.module('ngFlowGrid', [])
 			this.items = this.container.querySelectorAll( this.itemSelector||'.flowGridItem');
 			this.tempContainer = document.createElement('div');
 			this.tempContainer.className = 'flowGridTemp';
-			// put temp container to container, 
+			// put temp container to container,
 			this.container.appendChild( this.tempContainer );
 
-			
+
 			// hide the container temporarily,while doing the transform
 			this.container.style['visibility'] = 'hidden';
 			// this.tempContainer.style['visibility'] = 'hidden';
@@ -76,7 +76,7 @@ angular.module('ngFlowGrid', [])
 			});
 
 			this.numberOfColumns = Math.floor(this.container.clientWidth / this.minItemWidth);
-			// always keep at least one column 
+			// always keep at least one column
 			if (this.numberOfColumns < 1)
 	            this.numberOfColumns = 1;
 
@@ -95,7 +95,7 @@ angular.module('ngFlowGrid', [])
 		Flow.prototype.ensureColumns = function(){
 			var createdCnt = this.columns.length;
 			var calculatedCnt = this.numberOfColumns;
-			
+
 			// console.log('createdCnt',createdCnt);
 			// console.log('calculatedCnt',calculatedCnt);
 
@@ -108,10 +108,15 @@ angular.module('ngFlowGrid', [])
 				var neededCnt = calculatedCnt - createdCnt;
 				for (var columnIdx = 0; columnIdx < neededCnt; columnIdx++) {
 					var $column = document.createElement('div');
+
+					if (!column.dataset){
+						column.dataset = {};
+					}
+
 					$column.dataset.order = columnIdx;
 					$column.className = 'flowGridColumn';
 					// make sure insert at end of container
-					this.workingContainer.appendChild($column);	
+					this.workingContainer.appendChild($column);
 				}
 
 			// what we already have is more than what we need, we hide what we don't need;
@@ -187,7 +192,7 @@ angular.module('ngFlowGrid', [])
 
 				var lastInHighestColumn = this.columns[highestColumn].lastChild;
 				var lastInHighestColumnHeight = itemsHeights[ lastInHighestColumn.id ];
-				
+
 				var lowestHeight = columnsHeights[lowestColumn];
 				var highestHeight = columnsHeights[highestColumn];
 				var newLowestHeight = lowestHeight + lastInHighestColumnHeight;
@@ -249,11 +254,11 @@ angular.module('ngFlowGrid', [])
 					that.columnsHeights[columnIdx] += height;
 				}
 			}
-			
+
 		}
 		Flow.prototype.itemsChanged = function(){
-			this.items = this.container.querySelectorAll( this.itemSelector||'.flowGridItem');	
-			this.refill(true);	
+			this.items = this.container.querySelectorAll( this.itemSelector||'.flowGridItem');
+			this.refill(true);
 		}
 
 		return {
