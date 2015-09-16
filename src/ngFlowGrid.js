@@ -109,8 +109,8 @@ angular.module('ngFlowGrid', [])
 				for (var columnIdx = 0; columnIdx < neededCnt; columnIdx++) {
 					var $column = document.createElement('div');
 
-					if (!column.dataset){
-						column.dataset = {};
+					if (!$column.dataset){
+						$column.dataset = {};
 					}
 
 					$column.dataset.order = columnIdx;
