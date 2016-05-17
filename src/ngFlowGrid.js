@@ -1,5 +1,5 @@
 /*!
- * ngFlowGrid v0.0.1
+ * ngFlowGrid v1.0.1
  * http://eisneim.github.io/ngFlowGrid
  * Copyright (c) 2014 glexe.com
  * License: MIT
