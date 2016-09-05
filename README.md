@@ -15,7 +15,7 @@ pinterest layout like responsive image grid for AngularJS app with no jQuery dep
 ```html
 <script src="path/angular.min.js"></script>
 <script src="src/ngFlowGrid.js"></script>
-
+<link rel="stylesheet" type="text/css" href="src/FadeTransition.css.css">
 ```
 2.add ngFlowGrid to your app's dependency:
 ```javascript
@@ -24,13 +24,14 @@ var myApp = angular.module('myAppName', ['ngFlowGrid']);
 
 3.use ngFlowGrid directive in you html code:
 ```html
-<ul class="flowGrid" ng-flow-grid="homePageGrid" min-item-width="200">
-	<li class="flowGridItem" ng-repeat="item in items">
-		<a href=""><img ng-src="{{item.img}}"></a>
-		<h2>{{item.description}}</h2>
-	</li>
-</ul>
-
+<div class="box fade">
+	<ul class="flowGrid" ng-flow-grid="homePageGrid" min-item-width="200">
+		<li class="flowGridItem" ng-repeat="item in items">
+			<a href=""><img ng-src="{{item.img}}"></a>
+			<h2>{{item.description}}</h2>
+		</li>
+	</ul>
+</div>
 ```
 
 4.add some basic css to format the layout
@@ -53,6 +54,34 @@ var myApp = angular.module('myAppName', ['ngFlowGrid']);
 .flowGridColumn:last-of-type{
 	padding-right: 10px;
 }
+
+/* if you do not include the css file */
+
+    @-webkit-keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+    @-moz-keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+    @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+
+    .fade-in {
+      opacity:0;  
+      -webkit-animation:fadeIn ease-in 1;  
+      -moz-animation:fadeIn ease-in 1;
+      animation:fadeIn ease-in 1;
+
+      -webkit-animation-fill-mode:forwards;   
+      (opacity: 1)*/
+      -moz-animation-fill-mode:forwards;
+      animation-fill-mode:forwards;
+
+      -webkit-animation-duration:1s;
+      -moz-animation-duration:1s;
+      animation-duration:1s;
+    }
+
+    .fade-in.one {
+      -webkit-animation-delay: 0.7s;
+      -moz-animation-delay: 0.7s;
+      animation-delay: 0.7s;
+    }
 
 ```
 5.control the grid in your controller:
@@ -108,3 +137,4 @@ this will return a flowgrid object ,and you can controll that grid throght this 
 	});
 ```
  - `empty()` : remove all items inside of columns
+
