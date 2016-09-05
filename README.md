@@ -15,7 +15,7 @@ pinterest layout like responsive image grid for AngularJS app with no jQuery dep
 ```html
 <script src="path/angular.min.js"></script>
 <script src="src/ngFlowGrid.js"></script>
-<link rel="stylesheet" type="text/css" href="css/FadeTransition.css.css">
+<link rel="stylesheet" type="text/css" href="src/FadeTransition.css.css">
 ```
 2.add ngFlowGrid to your app's dependency:
 ```javascript
