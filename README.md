@@ -5,7 +5,7 @@ pinterest layout like responsive image grid for AngularJS app with no jQuery dep
 
 ![preview](snapshot.jpg 'ngFlowGrid preview')
 
-#Installation
+# Installation
 
 	bower install ngFlowGrid#latest
 
@@ -73,24 +73,24 @@ app.controller('appCtrl',['$scope','fgDelegate',function($scope,fgDelegate){
 take look at demo app;
 
 
-#Directive options
-###ngFlowGrid
+# Directive options
+### ngFlowGrid
 give a name for your grid, so that you can controll mutil grid in one page.
-###itemSelector(default:'.flowGridItem')
-###minItemWidth(default:150)
+### itemSelector(default:'.flowGridItem')
+### minItemWidth(default:150)
 this value will affect how many columns you have, the smaller it is the more columns there will be;
 
-#Service
+# Service
 through `fgDelegate` service you can get flow object and controll it in your controller or directive:
 
-###new(option)
+### new(option)
 options are:
  - `container`: container element.
  - `name`: string,the name of new grid.
  - `itemSelector`: string
  - `minItemWidth`: number, this will affect how many columns in grid;
 
-###getFlow(name)
+### getFlow(name)
 this will return a flowgrid object ,and you can controll that grid throght this object
  - `minItemWidth`:number
  - `container`:element
